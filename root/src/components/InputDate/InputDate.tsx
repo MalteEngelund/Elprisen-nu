@@ -6,10 +6,11 @@ interface InputDateProps {
 
 
 
+
 export function InputDate({ placeholder, value }: InputDateProps) {
 
   return (
-    <form>
+    <form className="bg-black">
       <input type="date" className="focus:outline-none" placeholder={placeholder} value={value} />
     </form>
   )

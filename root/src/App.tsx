@@ -4,6 +4,8 @@ import { MainLayout } from './layouts/MainLayout'
 import { LigeNuPage } from './pages/LigeNuPage'
 import { OversigtPage } from './pages/OversigtPage'
 import { HistorikPage } from './pages/HistorikPage'
+import { SettingsPage } from './pages/SettingsPage'
+import { SettingsProvider } from './context/SettingsContext'
 
 function App() {
 
@@ -11,16 +13,20 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />} >
-            <Route path='/' element={<LigeNuPage />} />
-            <Route path='/oversigt' element={<OversigtPage />} />
-            <Route path='/historik' element={<HistorikPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <SettingsProvider >
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />} >
+              <Route path='/' element={<LigeNuPage />} />
+              <Route path='/oversigt' element={<OversigtPage />} />
+              <Route path='/historik' element={<HistorikPage />} />
+              <Route path='/settings' element={<SettingsPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </SettingsProvider>
     </>
+
   )
 }
 

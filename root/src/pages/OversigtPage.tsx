@@ -1,21 +1,24 @@
 import { OverviewList } from "../components/OverviewList/OverviewList";
 import { Title } from "../components/Title/Title";
+import { useSettings } from "../context/SettingsContext";
 import { useFetch } from "../hooks/useFetch";
 import type { Elpriser } from "../Types/PriceTypes";
 
 export function OversigtPage() {
 
-
+  const { region } = useSettings()
+  const elRegion = region === "ØST" ? "DK2" : "DK1"
   let currentYear = new Date().getFullYear()
   let currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0')
   let currentDay = new Date().getDate().toString().padStart(2, '0')
-
-  console.log(`Fetching: https://www.elprisenligenu.dk/api/v1/prices/${currentYear}/${currentMonth}-${currentDay}_DK2.json`);
+  const url = `https://www.elprisenligenu.dk/api/v1/prices/${currentYear}/${currentMonth}-${currentDay}_${elRegion}.json`
+  
+  console.log(`url: ${url}`);
   const {
       data,
       isLoading,
       error,
-    } = useFetch<Elpriser[]>(`https://www.elprisenligenu.dk/api/v1/prices/${currentYear}/${currentMonth}-${currentDay}_DK2.json`); // dato skal være dynamisk og dk1 eller dk2 skal også
+    } = useFetch<Elpriser[]>(url); // dato skal være dynamisk og dk1 eller dk2 skal også
 
     if (isLoading) {
       return <h2>Loading data...</h2>;
@@ -34,7 +37,7 @@ export function OversigtPage() {
         <div className="flex flex-col justify-center items-center gap-4">
           <div className="flex w-38 h-38 justify-center items-center p-2 bg-black rounded-full border-2 border-gray-700">
             <div className="flex justify-center items-center text-center w-full h-full border-2 border-dashed border-green-500 rounded-full">
-              <div><p>{data ? `${Math.min(...data.map(price => price.DKK_per_kWh))} KR` : ""}</p></div>
+              <div><p>{data ? `${Math.min(...data.map(price => price.DKK_per_kWh)).toFixed(3)} KR` : ""}</p></div>
             </div>
           </div>
             <p>Laveste Pris</p>
@@ -42,7 +45,7 @@ export function OversigtPage() {
           <div className="flex flex-col justify-center items-center gap-4">
             <div className="flex w-38 h-38 justify-center items-center p-2 bg-black rounded-full border-2 border-gray-700">
               <div className="flex justify-center items-center text-center w-full h-full border-2 border-dashed border-green-500 rounded-full bg-black">
-                <div>{data ? `${Math.max(...data.map(price => price.DKK_per_kWh))} KR` : ""}</div>
+                <div>{data ? `${Math.max(...data.map(price => price.DKK_per_kWh)).toFixed(3)} KR` : ""}</div>
               </div>
             </div>
               <p>Højeste Pris</p>
@@ -51,7 +54,9 @@ export function OversigtPage() {
 
       <div className="flex flex-col justify-center items-center gap-3 py-4">
         {data?.map(price => (
-          <OverviewList key={price.time_start} time={`${new Date(price.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - ${new Date(price.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`} price={`${price.DKK_per_kWh} KR`} />
+          <OverviewList key={price.time_start} time={`${new Date(price.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+           - ${new Date(price.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`}
+          price={`${price.DKK_per_kWh.toFixed(3)} KR`} />
         ))}
       </div>
     </>
