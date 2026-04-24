@@ -3,7 +3,7 @@ const dynamicCacheName = 'dynamic-cache-v1';
 const assetsToCache = [
 	'/',
 	'./manifest.json',
-
+	'./fallback.html',
 	// Add more assets as needed
 ];
 
@@ -46,7 +46,10 @@ self.addEventListener('fetch', event => {
 					// Returnerer fetch request
 					return fetchRes
 				})
-			})
+			}) .catch(() => {
+			// Hvis både cache og server fejler, returner fallback page
+			return caches.match('/fallback.html');
+		})
 		})
 	)
 })
