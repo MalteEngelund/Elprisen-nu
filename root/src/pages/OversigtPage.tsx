@@ -6,7 +6,7 @@ import type { Elpriser } from "../Types/PriceTypes";
 
 export function OversigtPage() {
 
-  const { region } = useSettings()
+  const { region, momsOn } = useSettings()
   const elRegion = region === "ØST" ? "DK2" : "DK1"
   let currentYear = new Date().getFullYear()
   let currentMonth = (new Date().getMonth() + 1).toString().padStart(2, '0')
@@ -14,7 +14,7 @@ export function OversigtPage() {
   const url = `https://www.elprisenligenu.dk/api/v1/prices/${currentYear}/${currentMonth}-${currentDay}_${elRegion}.json`
   
   console.log(`url: ${url}`);
-  const {
+  let {
       data,
       isLoading,
       error,
@@ -28,9 +28,16 @@ export function OversigtPage() {
     }
     console.log(data);
 
+    if (!momsOn) {
+     data = data?.map(price => ({
+      ...price,
+      DKK_per_kWh: parseFloat((price.DKK_per_kWh / 1.25).toFixed(2)) // 25%
+    }))
+  }
+
 
   return (
-    <>
+    <div>
       <Title title="OVERSIGT" />
 
       <div className="flex flex-row justify-between w-full items-center px-16">
@@ -54,11 +61,11 @@ export function OversigtPage() {
 
       <div className="flex flex-col justify-center items-center gap-3 py-4">
         {data?.map(price => (
-          <OverviewList key={price.time_start} time={`${new Date(price.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+          <OverviewList time={`${new Date(price.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
            - ${new Date(price.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`}
           price={`${price.DKK_per_kWh.toFixed(3)} KR`} />
         ))}
       </div>
-    </>
+    </div>
   )
 }

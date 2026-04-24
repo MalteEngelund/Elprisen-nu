@@ -1,7 +1,8 @@
+
 const dynamicCacheName = 'dynamic-cache-v1';
 const assetsToCache = [
 	'/',
-	'./manifest.webmanifest', // vite konverterer til dette filnavn når man builder
+	'./manifest.json',
 
 	// Add more assets as needed
 ];

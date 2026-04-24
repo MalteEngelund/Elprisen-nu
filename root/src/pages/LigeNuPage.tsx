@@ -28,13 +28,7 @@ export function LigeNuPage() {
   }
   console.log(data);
 
-  if (!momsOn) {
-     data = data?.map(price => ({
-      ...price,
-      DKK_per_kWh: parseFloat((price.DKK_per_kWh / 1.25).toFixed(2)) // 25%
-    }))
-  }
-
+  
   let currentTime = new Date()
   let currentHour = currentTime.getHours()
   let currentPrice = data?.find(price => {
@@ -42,9 +36,15 @@ export function LigeNuPage() {
     return priceHour === currentHour
   })
   
-
+  if (!momsOn) {
+     data = data?.map(price => ({
+      ...price,
+      DKK_per_kWh: parseFloat((price.DKK_per_kWh / 1.25).toFixed(2)) // 25%
+    }))
+  }
+  
   return (
-    <>
+    <div>
       <Title title="ELPRISEN LIGE NU" />
       <section className="flex flex-col justify-center items-center text-center gap-4 text-green-500">
         <div className="flex flex-col justify-center items-center bg-black border-4 border-gray-700 rounded-full p-2">
@@ -63,6 +63,6 @@ export function LigeNuPage() {
           {currentPrice ? new Date(currentPrice.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ""}
         </p>
       </section>
-    </>
+    </div>
   )
 }
